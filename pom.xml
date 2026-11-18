@@ -12,7 +12,7 @@
 	<artifactId>gitops-demo-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>gitops-demo-app</name>
-	<description/>
+	<description>Accounts REST service delivered via a GitOps pipeline</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -112,6 +112,19 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<!-- Runs *IT tests (Testcontainers) in the integration-test phase of `mvn verify` -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
