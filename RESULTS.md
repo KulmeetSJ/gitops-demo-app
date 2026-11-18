@@ -15,6 +15,18 @@ All numbers are **personal-project benchmarks**, not production results.
 - **Raw output:** [`scans/trivy-baseline.json`](scans/trivy-baseline.json), [`scans/trivy-after-base-upgrade.json`](scans/trivy-after-base-upgrade.json).
 - **Environment:** Apple M2, 16 GB RAM, macOS 27.0.1, Docker Desktop.
 
+## Scan gate blocks a known-vulnerable dependency
+
+| Date | Change | Finding | CI result |
+|---|---|---|---|
+| 2026-11-18 | PR [#2](https://github.com/KulmeetSJ/gitops-demo-app/pull/2) adds `org.apache.commons:commons-text:1.9` | CVE-2022-42889, CRITICAL (fixed in 1.10.0) | ❌ failed at *Trivy gate*; alert raised in code scanning; no image pushed ([run](https://github.com/KulmeetSJ/gitops-demo-app/actions/runs/44366366707)) |
+
+- The PR was closed unmerged. Local reproduction: [`scans/trivy-vulnerable-dependency-pr.json`](scans/trivy-vulnerable-dependency-pr.json).
+
+## CI duration
+
+- The first green pipeline on `main` (test, then image, scan, SBOM, push) took 4m10s on GitHub-hosted `ubuntu-latest` ([run](https://github.com/KulmeetSJ/gitops-demo-app/actions/runs/44364385659)).
+
 ## Still to measure (Phase 4)
 - Deploy lead time (commit → prod `Healthy`, approval wait reported separately)
 - Rollback time (first failed analysis → stable at 100%), median of 5

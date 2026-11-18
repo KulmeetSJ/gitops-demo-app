@@ -8,6 +8,10 @@ updates:
   - package-ecosystem: docker      # keeps the digest-pinned distroless base current
     directory: /
     schedule: { interval: weekly }
+    ignore:
+      # Stay on the Java 21 LTS line; a JDK major upgrade is a deliberate decision, not a bot bump.
+      - dependency-name: eclipse-temurin
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: weekly }
