@@ -26,7 +26,7 @@ the Argo Rollouts analysis has to catch. Injected faults are counted in `app_inj
 
 ## CI pipeline (`.github/workflows/ci.yml`)
 1. **Build & test:** `mvn verify`: unit tests + Testcontainers integration tests against real PostgreSQL.
-2. **Image:** multi-stage build into a digest-pinned distroless JRE, non-root UID 65532, layered jar.
+2. **Image:** multi-stage build. The build stage is the official Maven image and the runtime is a distroless JRE, both pinned by digest. It runs as non-root UID 65532 with a layered jar.
 3. **Trivy:** results uploaded to GitHub code scanning (SARIF); the build **fails on any fixable HIGH/CRITICAL**.
 4. **SBOM:** Syft, SPDX JSON, attached as a workflow artifact.
 5. **Publish:** on `main` only, pushed to GHCR tagged with the commit SHA (immutable, never `:latest`).
