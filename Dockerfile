@@ -1,14 +1,15 @@
 # syntax=docker/dockerfile:1
 
 # ---- build stage: compile and split the Spring Boot jar into cache-friendly layers ----
-FROM eclipse-temurin:21-jdk-noble AS build
+# Official Maven image (pinned by digest) so the build never downloads Maven itself:
+# fewer network fetches during docker build = fewer flaky CI runs (see RESULTS.md, incident 2026-11-19).
+FROM maven:3.10.0-eclipse-temurin-21-noble@sha256:f6d6c7eb62ca6a7034c17bb04a6177a8269ca38e3a1febf95094dfcd97d1305b AS build
 WORKDIR /src
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
-RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -q dependency:go-offline
+COPY pom.xml ./
+RUN --mount=type=cache,target=/root/.m2 mvn -B -q dependency:go-offline
 COPY src/ src/
 # Tests run in CI before the image build (Testcontainers can't run inside docker build).
-RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -q -DskipTests package \
+RUN --mount=type=cache,target=/root/.m2 mvn -B -q -DskipTests package \
  && cp target/gitops-demo-app-*.jar app.jar \
  && java -Djarmode=tools -jar app.jar extract --layers --destination /extracted
 
