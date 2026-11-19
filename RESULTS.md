@@ -27,7 +27,9 @@ All numbers are **personal-project benchmarks**, not production results.
 
 - The first green pipeline on `main` (test, then image, scan, SBOM, push) took 4m10s on GitHub-hosted `ubuntu-latest` ([run](https://github.com/KulmeetSJ/gitops-demo-app/actions/runs/44364385659)).
 
-## Still to measure (Phase 4)
-- Deploy lead time (commit → prod `Healthy`, approval wait reported separately)
-- Rollback time (first failed analysis → stable at 100%), median of 5
-- Share of deployments blocked by policy, per policy
+## Measured in Phase 4 (2026-11-19)
+Methods and raw data are in [gitops-demo-platform/RESULTS.md](https://github.com/KulmeetSJ/gitops-demo-platform/blob/main/RESULTS.md).
+- **CI green: median 2m40s** over 3 runs (test, image, Trivy gate, SBOM, publish).
+- **Deploy lead time, commit → prod Healthy: median 17m12s** over 3 runs, excluding the human approval wait (reported separately, 1–5 min).
+- **Rollback, first failed analysis → stable at 100%: 30 s** in 5/5 drills. A bad release served traffic for a median of 90 s.
+- **Policy:** 7/7 non-compliant test manifests denied at admission, 0/1 compliant denied. The per-policy denial share across real deployments was not measured.
