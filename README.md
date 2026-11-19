@@ -14,6 +14,7 @@ The platform side lives in [gitops-demo-platform](https://github.com/KulmeetSJ/g
 | `POST /api/accounts` | Create an account (`ownerName`, ISO `currency`, `initialBalance`) → `201` + `Location` |
 | `GET /api/accounts`, `GET /api/accounts/{id}` | Read; unknown IDs return a `404` problem detail |
 | `/actuator/health/{liveness,readiness}` | Kubernetes probes |
+| `/actuator/info` | Build info (artifact, version, build time) |
 | `/actuator/prometheus` | Metrics, including `http_server_requests` histograms used by canary analysis |
 
 Spring Boot 4.1 · Java 21 · PostgreSQL + Flyway · Micrometer/Prometheus.

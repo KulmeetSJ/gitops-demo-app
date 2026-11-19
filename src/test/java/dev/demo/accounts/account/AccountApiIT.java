@@ -71,6 +71,9 @@ class AccountApiIT {
         mvc.perform(get("/actuator/health/readiness")).andExpect(status().isOk());
         mvc.perform(get("/actuator/health/liveness")).andExpect(status().isOk());
         mvc.perform(get("/api/accounts"));
+        mvc.perform(get("/actuator/info"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.build.artifact").value("gitops-demo-app"));
         mvc.perform(get("/actuator/prometheus"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("http_server_requests_seconds_bucket")));
