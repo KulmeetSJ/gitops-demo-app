@@ -115,3 +115,32 @@ jobs:
         run: |
           docker push "$IMAGE"
           echo "### Published \`$IMAGE\`" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy-dev:
+    name: Deploy to dev (GitOps commit)
+    needs: image
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency: { group: deploy-dev, cancel-in-progress: false }
+    steps:
+      # Write access to the platform repo ONLY, via a repo-scoped deploy key. No cluster credentials anywhere.
+      - uses: actions/checkout@v7
+        with:
+          repository: KulmeetSJ/gitops-demo-platform
+          ssh-key: ${{ secrets.PLATFORM_DEPLOY_KEY }}
+
+      - name: Commit new image tag to envs/dev
+        run: |
+          yq -i '.image.tag = strenv(GITHUB_SHA)' envs/dev/values.yaml
+          if git diff --quiet; then echo "dev already at $GITHUB_SHA"; exit 0; fi
+          git config user.name "gitops-demo-app-ci"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "dev: deploy ${GITHUB_SHA::12}" \
+            -m "App commit: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA" \
+            -m "CI run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          for attempt in 1 2 3 4 5; do
+            git push origin HEAD:main && break
+            echo "push rejected (attempt $attempt), rebasing"; sleep $((attempt * 2))
+            git pull --rebase origin main
+          done
+          echo "### Deployed \`${GITHUB_SHA::12}\` to dev via GitOps commit $(git rev-parse --short HEAD)" >> "$GITHUB_STEP_SUMMARY"
