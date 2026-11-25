@@ -14,7 +14,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn -B -q -DskipTests package \
  && java -Djarmode=tools -jar app.jar extract --layers --destination /extracted
 
 # ---- runtime stage: distroless JRE, no shell, no package manager, non-root ----
-FROM gcr.io/distroless/java21-debian13:nonroot@sha256:6b60e44d652d66a9e2e584364c96adac4df7133674b2834b6f71741b7cdb1ff3
+FROM gcr.io/distroless/java21-debian13:nonroot@sha256:128bd878463537eef7771b50fecf68faace9089f654a2d233f1c4f344e6817d9
 WORKDIR /app
 # Least-frequently-changing layers first so image pulls reuse cached layers.
 COPY --from=build /extracted/dependencies/ ./
