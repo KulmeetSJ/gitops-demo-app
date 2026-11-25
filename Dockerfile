@@ -3,7 +3,7 @@
 # ---- build stage: compile and split the Spring Boot jar into cache-friendly layers ----
 # Official Maven image (pinned by digest) so the build never downloads Maven itself:
 # fewer network fetches during docker build = fewer flaky CI runs (see RESULTS.md, incident 2026-11-19).
-FROM maven:3.10.0-eclipse-temurin-21-noble@sha256:f6d6c7eb62ca6a7034c17bb04a6177a8269ca38e3a1febf95094dfcd97d1305b AS build
+FROM maven:3-eclipse-temurin-26-noble@sha256:69a6c37f0a91fca2c9d0cdd684c9c0ea7b1bc00d4196749c24440b2e02ad163d AS build
 WORKDIR /src
 COPY pom.xml ./
 RUN --mount=type=cache,target=/root/.m2 mvn -B -q dependency:go-offline
